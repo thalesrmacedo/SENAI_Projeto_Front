@@ -1,0 +1,43 @@
+:root {
+  --primary: #1E3A8A;
+  --highlight: #34D399;
+  --text: #D1D5DB;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #fff;
+  color: var(--text);
+}
+
+header {
+  background: var(--primary);
+  padding: 1rem;
+}
+
+header ul {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+}
+
+.btn {
+  background: var(--highlight);
+  padding: 0.5rem 1rem;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+#placar {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 2rem;
+  color: var(--primary);
+}
