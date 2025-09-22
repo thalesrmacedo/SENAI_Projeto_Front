@@ -3,7 +3,7 @@ let tentativasRestantes = JSON.parse(localStorage.getItem("tentativasRestantes")
 let acertos = JSON.parse(localStorage.getItem("acertos")) || {};
 const MAX_TENTATIVAS = 3;
 
-// Inicializa tentativasRestantes
+// Inicializa tentativasRestantes e atualiza tentativas na tela
 document.querySelectorAll("main section").forEach(secao => {
   const id = secao.id;
   if (tentativasRestantes[id] === undefined) tentativasRestantes[id] = MAX_TENTATIVAS;
@@ -23,7 +23,7 @@ function atualizarPlacar() {
   document.getElementById("placar").textContent = `Pontuação: ${totalAcertos} / ${totalQuestoes}`;
 }
 
-// Atualizar tentativas restantes
+// Atualizar tentativas na tela
 function atualizarTentativasSecao(questaoId) {
   const secao = document.getElementById(questaoId);
   secao.querySelector(".tentativas").textContent = `Tentativas restantes: ${tentativasRestantes[questaoId]}`;
@@ -35,24 +35,22 @@ function desativarSecao(secao) {
   botoes.forEach(el => el.disabled = true);
 }
 
-// Mostra feedback
+// Mostrar feedback
 function mostrarFeedback(secao, correto, respostaCorreta) {
   secao.querySelector(".feedback").textContent = correto
     ? "✅ Correto!"
     : `❌ Errado! ${tentativasRestantes[secao.id] === 0 ? 'Resposta correta: ' + (Array.isArray(respostaCorreta) ? respostaCorreta.join(', ') : respostaCorreta) : ''}`;
 }
 
-// Processa qualquer tipo de resposta
+// Processar resposta
 function processarResposta(questaoId, respostaSelecionada, respostaCorreta, multipla=false) {
   const secao = document.getElementById(questaoId);
   if (acertos[questaoId]) return; // já acertou
 
-  // Diminuir tentativas
   tentativasRestantes[questaoId]--;
   salvarProgresso();
   atualizarTentativasSecao(questaoId);
 
-  // Verifica se está correto
   let correto = false;
   if (multipla) {
     correto = JSON.stringify(respostaSelecionada.slice().sort()) === JSON.stringify(respostaCorreta.slice().sort());
@@ -73,7 +71,7 @@ function processarResposta(questaoId, respostaSelecionada, respostaCorreta, mult
   atualizarPlacar();
 }
 
-// Funções específicas para cada tipo de questão
+// Funções específicas
 function verificarResposta(questaoId, respostaCorreta) {
   const radios = document.querySelectorAll(`#${questaoId} input[name="${questaoId}"]`);
   let selecionada = '';
@@ -90,16 +88,10 @@ function verificarMultipla(questaoId, respostasCorretas) {
   processarResposta(questaoId, selecionadas, respostasCorretas, true);
 }
 
-function verificarCombobox(questaoId, respostaCorreta) {
-  const secao = document.getElementById(questaoId);
-  const select = secao.querySelector("select"); // pega o select DENTRO da seção
+function verificarCombobox(questaoId, respostaCorreta, selectId) {
+  const select = document.getElementById(selectId);
   const selecionada = select.value;
-
-  if (!selecionada) { // vazio = nenhuma opção selecionada
-    alert('Selecione uma opção!');
-    return;
-  }
-
+  if (!selecionada) { alert('Selecione uma opção!'); return; }
   processarResposta(questaoId, selecionada, respostaCorreta);
 }
 
@@ -109,25 +101,12 @@ window.onload = function() {
     const id = secao.id;
     const respostaCorreta = getRespostaCorreta(id);
 
-    // Restaurar feedback e inputs **apenas se já houver tentativa**
+    // Feedback e desativação se já respondeu
     if (acertos[id] || tentativasRestantes[id] < MAX_TENTATIVAS) {
-      // Restaurar respostas do usuário
-      const radios = secao.querySelectorAll("input[type=radio]");
-      radios.forEach(r => { if(r.checked && acertos[id]) r.checked = true; });
-
-      const checkboxes = secao.querySelectorAll("input[type=checkbox]");
-      if (Array.isArray(respostaCorreta)) {
-        checkboxes.forEach(cb => { if(cb.checked && acertos[id]) cb.checked = true; });
-      }
-
-      const select = secao.querySelector("select");
-      if(select && acertos[id]) select.value = respostaCorreta;
-
       mostrarFeedback(secao, acertos[id] || false, respostaCorreta);
       atualizarTentativasSecao(id);
       if(tentativasRestantes[id] === 0 || acertos[id]) desativarSecao(secao);
     } else {
-      // Se ainda não respondeu, limpa feedback
       secao.querySelector(".feedback").textContent = '';
       atualizarTentativasSecao(id);
     }
