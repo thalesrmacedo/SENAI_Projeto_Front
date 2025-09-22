@@ -91,9 +91,15 @@ function verificarMultipla(questaoId, respostasCorretas) {
 }
 
 function verificarCombobox(questaoId, respostaCorreta) {
-  const select = document.getElementById(questaoId);
+  const secao = document.getElementById(questaoId);
+  const select = secao.querySelector("select"); // pega o select DENTRO da seção
   const selecionada = select.value;
-  if (!selecionada) { alert('Selecione uma opção!'); return; }
+
+  if (!selecionada) { // vazio = nenhuma opção selecionada
+    alert('Selecione uma opção!');
+    return;
+  }
+
   processarResposta(questaoId, selecionada, respostaCorreta);
 }
 
