@@ -1,10 +1,19 @@
 // Persistência de dados
-let tentativas = JSON.parse(localStorage.getItem("tentativas")) || {};
+let tentativasRestantes = JSON.parse(localStorage.getItem("tentativasRestantes")) || {};
 let acertos = JSON.parse(localStorage.getItem("acertos")) || {};
 
-// Salvar no localStorage
+// Máximo de tentativas por questão
+const MAX_TENTATIVAS = 3;
+
+// Inicializar tentativasRestantes para novas questões
+document.querySelectorAll("main section").forEach(secao => {
+  const id = secao.id;
+  if (tentativasRestantes[id] === undefined) tentativasRestantes[id] = MAX_TENTATIVAS;
+});
+
+// Salvar progresso
 function salvarProgresso() {
-  localStorage.setItem("tentativas", JSON.stringify(tentativas));
+  localStorage.setItem("tentativasRestantes", JSON.stringify(tentativasRestantes));
   localStorage.setItem("acertos", JSON.stringify(acertos));
 }
 
@@ -12,112 +21,121 @@ function salvarProgresso() {
 function atualizarPlacar() {
   const totalAcertos = Object.values(acertos).filter(v => v === true).length;
   const totalQuestoes = document.querySelectorAll("main section").length;
-  const placar = document.getElementById("placar");
-  if (placar) {
-    placar.textContent = `Pontuação: ${totalAcertos} / ${totalQuestoes}`;
-  }
+  document.getElementById("placar").textContent = `Pontuação: ${totalAcertos} / ${totalQuestoes}`;
 }
 
-// Desativar inputs após responder
+// Desativar inputs e botão
 function desativarSecao(secao) {
   const botoes = secao.querySelectorAll("button, input, select");
   botoes.forEach(el => el.disabled = true);
 }
 
-// Marcar feedback
-function marcarFeedback(secao, correto, respostaCorreta) {
+// Função de feedback
+function mostrarFeedback(secao, correto, respostaCorreta) {
   secao.querySelector(".feedback").textContent = correto
     ? "✅ Correto!"
-    : `❌ Errado! A resposta correta é "${respostaCorreta}"`;
-  desativarSecao(secao);
+    : `❌ Errado! ${tentativasRestantes[secao.id] === 0 ? 'Resposta correta: ' + (Array.isArray(respostaCorreta) ? respostaCorreta.join(', ') : respostaCorreta) : ''}`;
 }
 
-// Resposta única (radio)
-function verificarResposta(questaoId, respostaCorreta) {
+// Função genérica para tratar tentativas
+function processarResposta(questaoId, respostaSelecionada, respostaCorreta, multipla=false) {
   const secao = document.getElementById(questaoId);
-  const radios = secao.querySelectorAll(`input[name="${questaoId}"]`);
-  let selecionada = '';
-  radios.forEach(r => { if(r.checked) selecionada = r.value; });
 
-  if(!selecionada){ alert('Selecione uma opção!'); return; }
+  // Verifica se a questão já está correta
+  if (acertos[questaoId]) return;
 
-  const correto = selecionada === respostaCorreta;
-  acertos[questaoId] = correto;
-  tentativas[questaoId] = (tentativas[questaoId] || 0) + 1;
+  // Reduz tentativas
+  tentativasRestantes[questaoId]--;
   salvarProgresso();
 
-  marcarFeedback(secao, correto, respostaCorreta);
+  // Comparar resposta
+  let correto = false;
+  if (multipla) {
+    let respSelOrdenada = respostaSelecionada.slice().sort();
+    let respCorOrdenada = respostaCorreta.slice().sort();
+    correto = JSON.stringify(respSelOrdenada) === JSON.stringify(respCorOrdenada);
+  } else {
+    correto = respostaSelecionada === respostaCorreta;
+  }
+
+  if (correto) {
+    acertos[questaoId] = true;
+    salvarProgresso();
+    mostrarFeedback(secao, true, respostaCorreta);
+    desativarSecao(secao);
+  } else {
+    mostrarFeedback(secao, false, respostaCorreta);
+    if (tentativasRestantes[questaoId] === 0) {
+      desativarSecao(secao);
+    }
+  }
+
   atualizarPlacar();
 }
 
-// Resposta múltipla (checkbox)
+// Funções específicas
+function verificarResposta(questaoId, respostaCorreta) {
+  const radios = document.querySelectorAll(`#${questaoId} input[name="${questaoId}"]`);
+  let selecionada = '';
+  radios.forEach(r => { if (r.checked) selecionada = r.value; });
+
+  if (!selecionada) { alert('Selecione uma opção!'); return; }
+
+  processarResposta(questaoId, selecionada, respostaCorreta);
+}
+
 function verificarMultipla(questaoId, respostasCorretas) {
-  const secao = document.getElementById(questaoId);
-  const checkboxes = secao.querySelectorAll(`input[name="${questaoId}"]`);
+  const checkboxes = document.querySelectorAll(`#${questaoId} input[name="${questaoId}"]`);
   let selecionadas = [];
   checkboxes.forEach(cb => { if(cb.checked) selecionadas.push(cb.value); });
 
-  selecionadas.sort();
-  respostasCorretas.sort();
+  if (selecionadas.length === 0) { alert('Selecione pelo menos uma opção!'); return; }
 
-  const correto = JSON.stringify(selecionadas) === JSON.stringify(respostasCorretas);
-  acertos[questaoId] = correto;
-  tentativas[questaoId] = (tentativas[questaoId] || 0) + 1;
-  salvarProgresso();
-
-  marcarFeedback(secao, correto, respostasCorretas.join(', '));
-  atualizarPlacar();
+  processarResposta(questaoId, selecionadas, respostasCorretas, true);
 }
 
-// Resposta combobox (select)
 function verificarCombobox(questaoId, respostaCorreta) {
   const select = document.getElementById(questaoId);
-  const secao = select.closest("section");
-  const selecionado = select.value;
+  const selecionada = select.value;
 
-  if(!selecionado){ alert('Selecione uma opção!'); return; }
+  if (!selecionada) { alert('Selecione uma opção!'); return; }
 
-  const correto = selecionado === respostaCorreta;
-  acertos[questaoId] = correto;
-  tentativas[questaoId] = (tentativas[questaoId] || 0) + 1;
-  salvarProgresso();
-
-  marcarFeedback(secao, correto, respostaCorreta);
-  atualizarPlacar();
+  processarResposta(questaoId, selecionada, respostaCorreta);
 }
 
 // Restaurar progresso ao carregar a página
 window.onload = function() {
   document.querySelectorAll("main section").forEach(secao => {
-    const questaoId = secao.id;
-    if(acertos[questaoId] !== undefined){
-      const correto = acertos[questaoId];
-      const respostaCorreta = getRespostaCorreta(questaoId);
-      
+    const id = secao.id;
+    const respostaCorreta = getRespostaCorreta(id);
+
+    if (tentativasRestantes[id] === 0 || acertos[id]) {
       // Restaurar respostas
       const radios = secao.querySelectorAll("input[type=radio]");
       radios.forEach(r => { if(r.value === respostaCorreta) r.checked = true; });
 
       const checkboxes = secao.querySelectorAll("input[type=checkbox]");
-      const respostasCorretas = getRespostaCorreta(questaoId, true);
-      checkboxes.forEach(cb => { if(respostasCorretas.includes(cb.value)) cb.checked = true; });
+      if (Array.isArray(respostaCorreta)) {
+        checkboxes.forEach(cb => { if(respostaCorreta.includes(cb.value)) cb.checked = true; });
+      }
 
       const select = secao.querySelector("select");
       if(select) select.value = respostaCorreta;
 
-      // Feedback e desativar
-      marcarFeedback(secao, correto, Array.isArray(respostaCorreta) ? respostasCorretas.join(', ') : respostaCorreta);
+      // Mostrar feedback e desativar
+      mostrarFeedback(secao, acertos[id] || false, respostaCorreta);
+      if(tentativasRestantes[id] === 0 || acertos[id]) desativarSecao(secao);
     }
   });
 
   atualizarPlacar();
 };
 
-// Retorna respostas corretas
-function getRespostaCorreta(questaoId, multipla=false){
+// Função para retornar respostas corretas
+function getRespostaCorreta(questaoId){
   switch(questaoId){
     case "q1": return "C";
-    case "q2": return multipla ? ["A","B","C"] : "A";
+    case "q2": return ["A","B","C"];
     case "q3": return "C";
     default: return "";
   }
