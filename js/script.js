@@ -8,7 +8,7 @@ function salvarProgresso() {
   localStorage.setItem("acertos", JSON.stringify(acertos));
 }
 
-// Função geral para atualizar placar
+// Atualizar placar
 function atualizarPlacar() {
   const totalAcertos = Object.values(acertos).filter(v => v === true).length;
   const totalQuestoes = document.querySelectorAll("main section").length;
@@ -18,13 +18,13 @@ function atualizarPlacar() {
   }
 }
 
-// Função para desativar uma seção após responder
+// Desativar inputs após responder
 function desativarSecao(secao) {
   const botoes = secao.querySelectorAll("button, input, select");
   botoes.forEach(el => el.disabled = true);
 }
 
-// Função para marcar feedback automaticamente
+// Marcar feedback
 function marcarFeedback(secao, correto, respostaCorreta) {
   secao.querySelector(".feedback").textContent = correto
     ? "✅ Correto!"
@@ -32,62 +32,54 @@ function marcarFeedback(secao, correto, respostaCorreta) {
   desativarSecao(secao);
 }
 
-// Função para verificar resposta de radio (única escolha)
-function verificarResposta(nomeQuestao, respostaCorreta) {
-  const secao = document.getElementById(nomeQuestao);
-  const radios = secao.querySelectorAll(`input[name="${nomeQuestao}"]`);
-  let respostaSelecionada = '';
-  for (let radio of radios) {
-    if (radio.checked) respostaSelecionada = radio.value;
-  }
+// Resposta única (radio)
+function verificarResposta(questaoId, respostaCorreta) {
+  const secao = document.getElementById(questaoId);
+  const radios = secao.querySelectorAll(`input[name="${questaoId}"]`);
+  let selecionada = '';
+  radios.forEach(r => { if(r.checked) selecionada = r.value; });
 
-  if (!respostaSelecionada) {
-    alert('Selecione uma opção!');
-    return;
-  }
+  if(!selecionada){ alert('Selecione uma opção!'); return; }
 
-  const correto = respostaSelecionada === respostaCorreta;
-  acertos[nomeQuestao] = correto;
-  tentativas[nomeQuestao] = (tentativas[nomeQuestao] || 0) + 1;
+  const correto = selecionada === respostaCorreta;
+  acertos[questaoId] = correto;
+  tentativas[questaoId] = (tentativas[questaoId] || 0) + 1;
   salvarProgresso();
 
   marcarFeedback(secao, correto, respostaCorreta);
   atualizarPlacar();
 }
 
-// Função para verificar resposta múltipla (checkbox)
-function verificarMultipla(nomeQuestao, respostasCorretas) {
-  const secao = document.getElementById(nomeQuestao);
-  const checkboxes = secao.querySelectorAll(`input[name="${nomeQuestao}"]`);
-  let respostasSelecionadas = [];
-  checkboxes.forEach(c => { if (c.checked) respostasSelecionadas.push(c.value); });
+// Resposta múltipla (checkbox)
+function verificarMultipla(questaoId, respostasCorretas) {
+  const secao = document.getElementById(questaoId);
+  const checkboxes = secao.querySelectorAll(`input[name="${questaoId}"]`);
+  let selecionadas = [];
+  checkboxes.forEach(cb => { if(cb.checked) selecionadas.push(cb.value); });
 
-  respostasSelecionadas.sort();
+  selecionadas.sort();
   respostasCorretas.sort();
 
-  const correto = JSON.stringify(respostasSelecionadas) === JSON.stringify(respostasCorretas);
-  acertos[nomeQuestao] = correto;
-  tentativas[nomeQuestao] = (tentativas[nomeQuestao] || 0) + 1;
+  const correto = JSON.stringify(selecionadas) === JSON.stringify(respostasCorretas);
+  acertos[questaoId] = correto;
+  tentativas[questaoId] = (tentativas[questaoId] || 0) + 1;
   salvarProgresso();
 
   marcarFeedback(secao, correto, respostasCorretas.join(', '));
   atualizarPlacar();
 }
 
-// Função para verificar resposta de combobox (select)
-function verificarCombobox(idSelect, respostaCorreta) {
-  const select = document.getElementById(idSelect);
+// Resposta combobox (select)
+function verificarCombobox(questaoId, respostaCorreta) {
+  const select = document.getElementById(questaoId);
   const secao = select.closest("section");
-  const valorSelecionado = select.value;
+  const selecionado = select.value;
 
-  if (!valorSelecionado) {
-    alert('Selecione uma opção!');
-    return;
-  }
+  if(!selecionado){ alert('Selecione uma opção!'); return; }
 
-  const correto = valorSelecionado === respostaCorreta;
-  acertos[idSelect] = correto;
-  tentativas[idSelect] = (tentativas[idSelect] || 0) + 1;
+  const correto = selecionado === respostaCorreta;
+  acertos[questaoId] = correto;
+  tentativas[questaoId] = (tentativas[questaoId] || 0) + 1;
   salvarProgresso();
 
   marcarFeedback(secao, correto, respostaCorreta);
@@ -96,55 +88,37 @@ function verificarCombobox(idSelect, respostaCorreta) {
 
 // Restaurar progresso ao carregar a página
 window.onload = function() {
-  // Percorrer todas as seções
   document.querySelectorAll("main section").forEach(secao => {
     const questaoId = secao.id;
-
-    // Restaurar radio
-    const radios = secao.querySelectorAll("input[type=radio]");
-    if (radios.length > 0) {
-      radios.forEach(radio => {
-        if (acertos[questaoId] !== undefined && radio.value === getRespostaCorreta(questaoId)) {
-          // Marcar a resposta correta selecionada anteriormente
-          if (acertos[questaoId] === true) radio.checked = true;
-        }
-      });
-    }
-
-    // Restaurar checkbox
-    const checkboxes = secao.querySelectorAll("input[type=checkbox]");
-    if (checkboxes.length > 0) {
-      const respostasCorretas = getRespostaCorreta(questaoId, true);
-      if (acertos[questaoId] !== undefined && acertos[questaoId] !== null) {
-        checkboxes.forEach(cb => {
-          if (respostasCorretas.includes(cb.value)) cb.checked = true;
-        });
-      }
-    }
-
-    // Restaurar select
-    const select = secao.querySelector("select");
-    if (select && acertos[questaoId] !== undefined) {
-      select.value = getRespostaCorreta(questaoId);
-    }
-
-    // Marcar feedback e desativar se já respondido
-    if (acertos[questaoId] !== undefined) {
+    if(acertos[questaoId] !== undefined){
       const correto = acertos[questaoId];
-      const respostaCorreta = getRespostaCorreta(questaoId, checkboxes.length > 0);
-      marcarFeedback(secao, correto, Array.isArray(respostaCorreta) ? respostaCorreta.join(', ') : respostaCorreta);
+      const respostaCorreta = getRespostaCorreta(questaoId);
+      
+      // Restaurar respostas
+      const radios = secao.querySelectorAll("input[type=radio]");
+      radios.forEach(r => { if(r.value === respostaCorreta) r.checked = true; });
+
+      const checkboxes = secao.querySelectorAll("input[type=checkbox]");
+      const respostasCorretas = getRespostaCorreta(questaoId, true);
+      checkboxes.forEach(cb => { if(respostasCorretas.includes(cb.value)) cb.checked = true; });
+
+      const select = secao.querySelector("select");
+      if(select) select.value = respostaCorreta;
+
+      // Feedback e desativar
+      marcarFeedback(secao, correto, Array.isArray(respostaCorreta) ? respostasCorretas.join(', ') : respostaCorreta);
     }
   });
 
   atualizarPlacar();
 };
 
-// Função auxiliar para retornar a resposta correta de cada questão
-function getRespostaCorreta(questaoId, multipla=false) {
-  switch(questaoId) {
-    case "q1": return "C";               // Questão 1
-    case "q2": return multipla ? ["A","B","C"] : "A";  // Questão 2
-    case "q3": return "C";               // Questão 3
+// Retorna respostas corretas
+function getRespostaCorreta(questaoId, multipla=false){
+  switch(questaoId){
+    case "q1": return "C";
+    case "q2": return multipla ? ["A","B","C"] : "A";
+    case "q3": return "C";
     default: return "";
   }
 }
