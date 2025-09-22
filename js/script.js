@@ -29,13 +29,13 @@ function atualizarTentativasSecao(questaoId) {
   tentativasEl.textContent = `Tentativas restantes: ${tentativasRestantes[questaoId]}`;
 }
 
-// Desativar inputs
+// Desativar inputs e botão
 function desativarSecao(secao) {
   const botoes = secao.querySelectorAll("button, input, select");
   botoes.forEach(el => el.disabled = true);
 }
 
-// Feedback
+// Mostrar feedback
 function mostrarFeedback(secao, correto, respostaCorreta) {
   secao.querySelector(".feedback").textContent = correto
     ? "✅ Correto!"
@@ -46,7 +46,7 @@ function mostrarFeedback(secao, correto, respostaCorreta) {
 function processarResposta(questaoId, respostaSelecionada, respostaCorreta, multipla=false) {
   const secao = document.getElementById(questaoId);
 
-  if (acertos[questaoId]) return; // já acertou
+  if (acertos[questaoId]) return; // Já acertou
 
   // Diminuir tentativas
   tentativasRestantes[questaoId]--;
@@ -80,7 +80,9 @@ function verificarResposta(questaoId, respostaCorreta) {
   const radios = document.querySelectorAll(`#${questaoId} input[name="${questaoId}"]`);
   let selecionada = '';
   radios.forEach(r => { if(r.checked) selecionada = r.value; });
+
   if (!selecionada) { alert('Selecione uma opção!'); return; }
+
   processarResposta(questaoId, selecionada, respostaCorreta);
 }
 
@@ -88,14 +90,18 @@ function verificarMultipla(questaoId, respostasCorretas) {
   const checkboxes = document.querySelectorAll(`#${questaoId} input[name="${questaoId}"]`);
   let selecionadas = [];
   checkboxes.forEach(cb => { if(cb.checked) selecionadas.push(cb.value); });
+
   if (selecionadas.length === 0) { alert('Selecione pelo menos uma opção!'); return; }
+
   processarResposta(questaoId, selecionadas, respostasCorretas, true);
 }
 
 function verificarCombobox(questaoId, respostaCorreta) {
   const select = document.getElementById(questaoId);
   const selecionada = select.value;
+
   if (!selecionada) { alert('Selecione uma opção!'); return; }
+
   processarResposta(questaoId, selecionada, respostaCorreta);
 }
 
@@ -105,34 +111,27 @@ window.onload = function() {
     const id = secao.id;
     const respostaCorreta = getRespostaCorreta(id);
 
-    // Restaurar respostas
-    const radios = secao.querySelectorAll("input[type=radio]");
-    radios.forEach(r => { if(r.value === respostaCorreta) r.checked = true; });
+    // Só restaurar se a questão já foi respondida (acertos ou tentativas < MAX_TENTATIVAS)
+    if (acertos[id] || tentativasRestantes[id] < MAX_TENTATIVAS) {
+      // Restaurar respostas do usuário
+      if (acertos[id]) {
+        const radios = secao.querySelectorAll("input[type=radio]");
+        radios.forEach(r => { if(r.value === respostaCorreta) r.checked = true; });
 
-    const checkboxes = secao.querySelectorAll("input[type=checkbox]");
-    if (Array.isArray(respostaCorreta)) {
-      checkboxes.forEach(cb => { if(respostaCorreta.includes(cb.value)) cb.checked = true; });
+        const checkboxes = secao.querySelectorAll("input[type=checkbox]");
+        if (Array.isArray(respostaCorreta)) {
+          checkboxes.forEach(cb => { if(respostaCorreta.includes(cb.value)) cb.checked = true; });
+        }
+
+        const select = secao.querySelector("select");
+        if(select) select.value = respostaCorreta;
+      }
+
+      mostrarFeedback(secao, acertos[id] || false, respostaCorreta);
+      atualizarTentativasSecao(id);
+      if (tentativasRestantes[id] === 0 || acertos[id]) desativarSecao(secao);
+    } else {
+      // Questão não respondida: resetar feedback e tentativas
+      secao.querySelector(".feedback").textContent = '';
+      atualizarTentativasSecao(id);
     }
-
-    const select = secao.querySelector("select");
-    if(select) select.value = respostaCorreta;
-
-    // Feedback e tentativas
-    mostrarFeedback(secao, acertos[id] || false, respostaCorreta);
-    atualizarTentativasSecao(id);
-
-    if(tentativasRestantes[id] === 0 || acertos[id]) desativarSecao(secao);
-  });
-
-  atualizarPlacar();
-};
-
-// Respostas corretas
-function getRespostaCorreta(questaoId){
-  switch(questaoId){
-    case "q1": return "C";
-    case "q2": return ["A","B","C"];
-    case "q3": return "C";
-    default: return "";
-  }
-}
