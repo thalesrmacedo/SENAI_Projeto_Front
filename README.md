@@ -1,11 +1,19 @@
 # SENAI - Projeto Teste Front-End
 
+## Informações sobre o autor
+Autor: Thales Macedo
+
 ## Resumo do projeto
 Esee projeto teve como objetivo a criação de uma aplicação web para um curso autoinstrucional sobre como configurar uma conta de e-mail profissional. Foram utilizados o HTML semântico (separando os arquivos em sessões como header, main, section, article e footer) e o CSS responsivo (layout com media queries, uso de seletores (id e class) e pseudo-classe (hover) e estilização de formulário (comandos input, button, select), além de JavaScript (manipulação do DOM com querySelector e getElementById, lógica orientada a eventos (onclick, adEventListener, modularização do código para construção das funções que modificam o formulário e criação de estrutura para persistência dos dados). A página inicial (index.html) apresenta uma frase se boas-vindas e um botão que, ao ser clicado, direciona para a página do artigo do projeto. A página artigo.html contém um texto que faz uma simulação do texto presente no curso, aparesentando imagens e design responsivo para diversos tipos de telas. As imagens foram centralizadas na tela para que todo espaço seja ocupado quando em telas maiores. O nome das imagens se manteve em um padrão simples para que seja possível buscar por uma imagem de maneira mais fácil. A página exercicios.html apresenta três exercícios de diversos tipos (escolha única, múltipla escolha, combobox) e dentro da temática que foi apresentada no roteiro fornecido pelo SENAI. O usuário pode escolher até 3 tentativas e essa informações ficam armazenadas no navegador com 'localStorage'. Existe no fim da página o placar dinâmico, que mostra a quantidade de acertos que o usuário fez. Em todas as páginas existe um menu de três botões que redirecionam para qualquer arquivo do projeto. As cores escolhidas foram sugeridas no roteiro fornecido pelo SENAI. Foi informada da possibilidade de se criar um recurso "modo claro e modo escuro", porém para esse projeto optou-se em manter o site exclusivamente no modo escuro, já que a cor da letra é clara demais para o modo claro, mantendo a ideia de design minimalista. Não foi utilizada biblioteca React já que o objetivo principal desse projeto foi demonstrar os conceitos fundamentais do front-end (HTML, CSS e JavaScript) sem uma camada extra de abstração. O projeto foi hospedado no GitHub e pode ser testado utilizando o GitHub Pages.
 
-## Como rodar
-1. Abra o `index.html` no navegador
-2. Navegue até `exercicios.html` para testar
+## Processo criativo
+Foi escolhido o tema de configuração de e-mail profissional em virtude da familiaridade do autor com o tema. O autor fez uma pesquisa em sites com as informações e sintetizou os textos em um arquivo final. Não foram utilizadas as normas ABNT de citações ao longo do texto pensando no público alvo, que poderia achar o texto mais difícil de interpretar. As referências foram adicionadas no fim do arquivo do artigo, seguindo o padrão ABNT para referências. O design minimalista foi mantido e o background da página foi mantido em modo escuro, tudo isso permite uma leitura mais fluida, melhorando a experiência do usuário na página.
 
-## Hospedagem
-Sugestão: publicar no GitHub Pages, Vercel ou Netlify
+## Decisões técnicas
+O foco do projeto consistiu em demonstrar os conceitos fundamentais do front-end (HTML, CSS e JavaScript) sem uma camada extra de abstração, o que não impede que seja possível desenvolver ainda mais o projeto com a implementação de tal biblioteca. Foi utilizado o GitHub e o GitHub Pages pela facilidae do autor com essas ferramentas.
+
+## Uso de IA
+Os textos do projeto (na parte de curso e dos exercícios) não utilizaram IA. Estes foram construídos através de pesquisa em sites e em conhecimentos que o autor possui sobre o tema. Para a parte de códigos foi utilizada a IA para resolver problemas de construção do código, principalmente no que diz respeito ao diálogo necessário entre os arquivos script.js e exercicios.html para que funcionassem de um jeito adequado para a apresentação. A IA foi utilizada em virtude dela ser uma ferramenta útil para auxiliar o desenvolvedor a procurar por fontes de erros que, às vezes, não estão tão nítidas para a correção (por exemplo: o ajuste em uma página que depende na verdade do ajuste feito em outra página).
+
+## Desafios
+Houveram vários desafios durante a execução do projeto. O principal deles foi fazer os ajustes necessários para que o arquivo script.js e o arquivo exercicios.html conversassem adequadamente para fazer com que o efeito desejado fosse atingido. Para as correções foi necessário mudar o nome de sessões, atualizar códigos e criar funções. 
