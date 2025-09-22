@@ -19,49 +19,51 @@
   </header>
 
   <main>
-    <h1>Exercícios Interativos</h1>
+    <h1>Exercícios sobre Front-End</h1>
 
-    <!-- Exercício 1 - Escolha Única -->
     <section id="ex1">
       <h2>Questão 1</h2>
-      <p>Pergunta de escolha única</p>
+      <p>O que significa o termo “Front-End”?</p>
       <form>
-        <label><input type="radio" name="q1" value="A"> Opção A</label><br>
-        <label><input type="radio" name="q1" value="B"> Opção B</label><br>
-        <label><input type="radio" name="q1" value="C"> Opção C</label><br>
-        <button type="button" onclick="verificarResposta('q1','B')">Responder</button>
+        <label><input type="radio" name="q1" value="A"> Parte do servidor que processa as requisições</label><br>
+        <label><input type="radio" name="q1" value="B"> Parte do banco de dados onde ficam as tabelas</label><br>
+        <label><input type="radio" name="q1" value="C"> Parte visual e interativa que o usuário acessa</label><br>
+        <label><input type="radio" name="q1" value="D"> Configurações internas do sistema operacional</label><br>
+        <label><input type="radio" name="q1" value="E"> Somente os arquivos CSS</label><br>
+        <button type="button" onclick="verificarResposta('q1','C')">Responder</button>
       </form>
       <p class="feedback"></p>
     </section>
-
-    <!-- Exercício 2 - Múltipla Escolha -->
+    
     <section id="ex2">
       <h2>Questão 2</h2>
-      <p>Pergunta de múltipla escolha</p>
+      <p>Quais destas tecnologias fazem parte do núcleo do desenvolvimento front-end?</p>
       <form>
-        <label><input type="checkbox" name="q2" value="A"> Opção A</label><br>
-        <label><input type="checkbox" name="q2" value="B"> Opção B</label><br>
-        <label><input type="checkbox" name="q2" value="C"> Opção C</label><br>
-        <button type="button" onclick="verificarMultipla('q2',['A','C'])">Responder</button>
+        <label><input type="checkbox" name="q2" value="A"> HTML</label><br>
+        <label><input type="checkbox" name="q2" value="B"> CSS</label><br>
+        <label><input type="checkbox" name="q2" value="C"> JavaScript</label><br>
+        <label><input type="checkbox" name="q2" value="D"> MySQL</label><br>
+        <label><input type="checkbox" name="q2" value="E"> Node.js</label><br>
+        <button type="button" onclick="verificarMultipla('q2',['A','B','C'])">Responder</button>
       </form>
       <p class="feedback"></p>
     </section>
-
-    <!-- Exercício 3 - Combobox -->
+    
     <section id="ex3">
       <h2>Questão 3</h2>
-      <p>Pergunta com combobox</p>
+      <p>Qual é a principal função do CSS no desenvolvimento front-end?</p>
       <select id="q3">
         <option value="">Selecione...</option>
-        <option value="A">Opção A</option>
-        <option value="B">Opção B</option>
-        <option value="C">Opção C</option>
+        <option value="A">Estruturar o conteúdo da página</option>
+        <option value="B">Definir a lógica e interatividade da página</option>
+        <option value="C">Estilizar e formatar a aparência visual</option>
+        <option value="D">Gerenciar o banco de dados</option>
+        <option value="E">Criar rotinas no servidor</option>
       </select>
       <button type="button" onclick="verificarCombobox('q3','C')">Responder</button>
       <p class="feedback"></p>
     </section>
 
-    <!-- Placar -->
     <p id="placar">Pontuação: 0 / 3</p>
   </main>
 
