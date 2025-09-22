@@ -35,11 +35,21 @@ header a {
   border-radius: 5px;
 }
 
+.legenda {
+        text-align: center;
+      font-weight: bold;
+    }
+
+.referencia {
+    font-size:12px;
+    }
+
+
 img {
   width: 400px;
-  height: auto;   /* mantém a proporção da imagem */
-  display: block; /* evita espaçamento indesejado em linha */
-  margin: 1rem auto; /* centraliza horizontalmente */
+  height: auto; 
+  display: block; 
+  margin: 1rem auto;
 }
 
 #placar {
