@@ -35,6 +35,13 @@ header a {
   border-radius: 5px;
 }
 
+img {
+  width: 400px;
+  height: auto;   /* mantém a proporção da imagem */
+  display: block; /* evita espaçamento indesejado em linha */
+  margin: 1rem auto; /* centraliza horizontalmente */
+}
+
 #placar {
   font-size: 1.2rem;
   font-weight: bold;
