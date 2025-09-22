@@ -1,15 +1,7 @@
-# Projeto Teste Front-End
+# SENAI - Projeto Teste Front-End
 
-## Estrutura
-- HTML semântico
-- CSS responsivo (Flexbox/Grid)
-- JavaScript para lógica dos exercícios e persistência
-
-## Funcionalidades
-- Exercícios interativos (escolha única, múltipla escolha, combobox)
-- Feedback em até 3 tentativas
-- Persistência no navegador com `localStorage`
-- Placar dinâmico
+## Resumo do projeto
+Esee projeto teve como objetivo a criação de uma aplicação web para um curso autoinstrucional sobre como configurar uma conta de e-mail profissional. Foram utilizados o HTML semântico (separando os arquivos em sessões como header, main, section, article e footer) e o CSS responsivo (layout com media queries, uso de seletores (id e class) e pseudo-classe (hover) e estilização de formulário (comandos input, button, select), além de JavaScript (manipulação do DOM com querySelector e getElementById, lógica orientada a eventos (onclick, adEventListener, modularização do código para construção das funções que modificam o formulário e criação de estrutura para persistência dos dados). A página inicial (index.html) apresenta uma frase se boas-vindas e um botão que, ao ser clicado, direciona para a página do artigo do projeto. A página artigo.html contém um texto que faz uma simulação do texto presente no curso, aparesentando imagens e design responsivo para diversos tipos de telas. As imagens foram centralizadas na tela para que todo espaço seja ocupado quando em telas maiores. O nome das imagens se manteve em um padrão simples para que seja possível buscar por uma imagem de maneira mais fácil. A página exercicios.html apresenta três exercícios de diversos tipos (escolha única, múltipla escolha, combobox) e dentro da temática que foi apresentada no roteiro fornecido pelo SENAI. O usuário pode escolher até 3 tentativas e essa informações ficam armazenadas no navegador com 'localStorage'. Existe no fim da página o placar dinâmico, que mostra a quantidade de acertos que o usuário fez. Em todas as páginas existe um menu de três botões que redirecionam para qualquer arquivo do projeto. As cores escolhidas foram sugeridas no roteiro fornecido pelo SENAI. Foi informada da possibilidade de se criar um recurso "modo claro e modo escuro", porém para esse projeto optou-se em manter o site exclusivamente no modo escuro, já que a cor da letra é clara demais para o modo claro, mantendo a ideia de design minimalista. Não foi utilizada biblioteca React já que o objetivo principal desse projeto foi demonstrar os conceitos fundamentais do front-end (HTML, CSS e JavaScript) sem uma camada extra de abstração. O projeto foi hospedado no GitHub e pode ser testado utilizando o GitHub Pages.
 
 ## Como rodar
 1. Abra o `index.html` no navegador
